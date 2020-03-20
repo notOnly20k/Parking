@@ -196,6 +196,7 @@ public class MainActivity extends AppCompatActivity implements ParkAdapter.Callb
         tvSure.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                dialog.dismiss();
                 cancelOrder(parkingSpace);
             }
         });
