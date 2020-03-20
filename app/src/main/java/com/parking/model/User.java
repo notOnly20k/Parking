@@ -8,6 +8,7 @@ public class User implements Serializable {
     private String car;
     private String password;
     private String account;
+    private int gold;
 
     public User() {
     }
@@ -18,6 +19,14 @@ public class User implements Serializable {
         this.car = car;
         this.password = password;
         this.account = account;
+    }
+
+    public int getGold() {
+        return gold;
+    }
+
+    public void setGold(int gold) {
+        this.gold = gold;
     }
 
     public int getId() {

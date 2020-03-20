@@ -1,6 +1,8 @@
 package com.parking.model;
 
 import java.io.Serializable;
+import java.sql.Date;
+import java.sql.Timestamp;
 
 public class ParkingSpace implements Serializable {
     private int id;
@@ -8,6 +10,7 @@ public class ParkingSpace implements Serializable {
     private int is_empty;
     private int parking_user_id;
     private String parking_car;
+    private Timestamp startTime;
 
     public ParkingSpace() {
     }
@@ -16,6 +19,14 @@ public class ParkingSpace implements Serializable {
         this.id = id;
         this.num = num;
         this.is_empty = is_empty;
+    }
+
+    public Timestamp getStartTime() {
+        return startTime;
+    }
+
+    public void setStartTime(Timestamp startTime) {
+        this.startTime = startTime;
     }
 
     public int getParking_user_id() {
@@ -64,6 +75,9 @@ public class ParkingSpace implements Serializable {
                 "id=" + id +
                 ", num='" + num + '\'' +
                 ", is_empty=" + is_empty +
+                ", parking_user_id=" + parking_user_id +
+                ", parking_car='" + parking_car + '\'' +
+                ", startTime=" + startTime +
                 '}';
     }
 }

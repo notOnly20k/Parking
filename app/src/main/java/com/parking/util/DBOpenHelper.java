@@ -17,8 +17,8 @@ public class DBOpenHelper {
         Connection conn = null;
         try {
             Class.forName("com.mysql.jdbc.Driver");
-            String ip = "192.168.1.8";
-//            String ip = "10.0.2.2";
+//            String ip = "192.168.1.8";
+            String ip = "10.0.2.2";
             String dbName="car_park";
             conn = DriverManager.getConnection(
                     "jdbc:mysql://"+ip+":3306/" + dbName +"?serverTimezone=UTC&useUnicode=yes&characterEncoding=utf-8&useSSL=false",

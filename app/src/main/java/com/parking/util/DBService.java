@@ -69,6 +69,36 @@ public class DBService {
 
     }
 
+    public Observable<Integer> updateUserData(User user) {
+        return Observable.just(user)
+                .map(new Function<User, Integer>() {
+
+                    @Override
+                    public Integer apply(User user) throws Exception {
+                        int result = -1;
+                        conn = DBOpenHelper.getConn();
+                        String sql = "update user set account=?,password=?,car=?,name=? where id =?";
+                        ps = conn.prepareStatement(sql);
+                        ps.setString(1, user.getAccount());
+                        ps.setString(2, user.getPassword());
+                        ps.setString(3, user.getCar());
+                        ps.setString(4, user.getName());
+                        ps.setInt(5, user.getId());
+                        result = ps.executeUpdate();
+                        DBOpenHelper.closeAll(conn, ps);
+                        return result;
+                    }
+                }).onErrorReturn(new Function<Throwable, Integer>() {
+                    @Override
+                    public Integer apply(Throwable throwable) {
+                        throwable.printStackTrace();
+                        DBOpenHelper.closeAll(conn, ps);
+                        return -1;
+                    }
+                });
+
+    }
+
     public Observable<Integer> insertMessage(Message message) {
         return Observable.just(message)
                 .map(new Function<Message, Integer>() {
@@ -125,6 +155,7 @@ public class DBService {
                                 List<ParkingSpace>parkingSpaces=new ArrayList<>();
                                 while (resultSet.next()){
                                     ParkingSpace parkingSpace=new ParkingSpace();
+                                    parkingSpace.setStartTime(resultSet.getTimestamp("startTime"));
                                     parkingSpace.setId(resultSet.getInt("id"));
                                     parkingSpace.setIs_empty(resultSet.getInt("is_empty"));
                                     parkingSpace.setNum(resultSet.getString("num"));
@@ -191,6 +222,7 @@ public class DBService {
                 });
     }
 
+
     public Observable<Integer> updateParkingSpace(final ParkingSpace parkingSpace) {
         return Observable.just(parkingSpace)
                 .map(new Function<ParkingSpace, Integer>() {
@@ -199,12 +231,13 @@ public class DBService {
                     public Integer apply(ParkingSpace parkingSpace) throws Exception {
                         int result = -1;
                         conn = DBOpenHelper.getConn();
-                        String sql="update parking_space set is_empty=? ,parking_car=?,parking_user_id=? where id=?";
+                        String sql="update parking_space set is_empty=? ,parking_car=?,parking_user_id=?,startTime=? where id=?";
                         ps = conn.prepareStatement(sql);
                         ps.setInt(1, parkingSpace.getIs_empty());
                         ps.setString(2, parkingSpace.getParking_car());
                         ps.setInt(3, parkingSpace.getParking_user_id());
-                        ps.setInt(4, parkingSpace.getId());
+                        ps.setTimestamp(4, parkingSpace.getStartTime());
+                        ps.setInt(5, parkingSpace.getId());
                         result = ps.executeUpdate();//返回1 执行成功
                         DBOpenHelper.closeAll(conn, ps);
                         return result;
@@ -217,6 +250,36 @@ public class DBService {
                         return -1;
                     }
                 });
+    }
+
+    public Observable<Integer> getParkingSpaceByUserId(Integer userId) {
+        return Observable.just(userId)
+                .map(new Function<Integer, Integer>() {
+
+                    @Override
+                    public Integer apply(Integer userId) throws Exception {
+                        int count =0;
+                        conn = DBOpenHelper.getConn();
+                        String sql = "SELECT COUNT(*) as t FROM parking_space where parking_user_id = "+userId;
+                        ps = conn.prepareStatement(sql);
+                        if (ps!=null){
+                            rs = ps.executeQuery();
+                            while (rs.next()){
+                                count=rs.getInt("t");
+                            }
+                        }
+                        DBOpenHelper.closeAll(conn, ps);
+                        return count;
+                    }
+                }).onErrorReturn(new Function<Throwable,Integer>() {
+                    @Override
+                    public Integer apply(Throwable throwable) {
+                        throwable.printStackTrace();
+                        DBOpenHelper.closeAll(conn, ps);
+                        return 0;
+                    }
+                });
+
     }
 
     public Observable<List<Message>> getMessage(Integer userId) {
